@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> WhatsApp Groups Analyzer</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="index.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+	<div id="main-panel">
+		<h1> WhatsApp Groups Analyzer </h1>
+
+		<div id="dropzone">
+			Drop Chat History file here!
+			<br/>
+			<span style="font-size: 30px;"> or </span>
+			<label class="btn btn-default btn-file">
+			    Choose <input id="manual-select" type="file" name="files[]" style="display: none;">
+			</label>
+			<span class="warning hidden"> Backup file must be a text file! </span>
+		</div>
+		<output id="list"></output>
+
+		<div class="footer"> Check the code out on GitHub!</div>
+	</div>
+
+	<script src="index.js" type="text/javascript"></script>
+</body>
+</html>
