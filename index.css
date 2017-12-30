@@ -164,3 +164,17 @@ h2 {
 	width: 65%;
 	background-color: green;
 }
+
+
+.dual_container {
+	width: 100%;
+
+	display: flex;
+	flex-direction: row;
+}
+
+.single_container {
+	width: 45%;
+
+	flex-grow: 1;
+}

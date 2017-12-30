@@ -3,8 +3,8 @@ function analyzeChatBackup(file) {
 	$("#dropzone").addClass("hidden");
 
 	checkFileFormat(file)
-	computeStatistics(file)
-	drawPlots(file)
+	// computeStatistics(file)
+	// drawPlots(file)
 }
 
 function handleFileSelect(evt) {
@@ -52,10 +52,10 @@ window.onload = function() {
 	var manualSelect = document.getElementById('manual-select');
 	manualSelect.addEventListener('change', handleFileSelect, false);
 
-	$(".tags-element").tagsInput({
-		'height':'58px',
-		'width': '100%',
-		'defaultText': 'Add a nickname',
-		'min-height': '58px'
-	});
+	// $(".tags-element").tagsInput({
+	// 	'height':'58px',
+	// 	'width': '100%',
+	// 	'defaultText': 'Add a nickname',
+	// 	'min-height': '58px'
+	// });
 }

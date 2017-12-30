@@ -8,6 +8,8 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://unpkg.com/compromise@latest/builds/compromise.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.1.0"></script>
 
 	<!-- <script src="libs/jquery.tagsinput/jquery.tagsinput.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="libs/jquery.tagsinput/jquery.tagsinput.min.css" /> -->
@@ -29,6 +31,14 @@
 				<h2>Participants</h2>
 				<div id="user-elements">
 					
+				</div>
+			</div>
+			<div id="total_messages" class="hidden dual_container">
+				<div class="single_container">
+					<canvas id="total_messages_overall"></canvas>
+				</div>
+				<div class="single_container">
+					<canvas id="total_messages_lastyear"></canvas>
 				</div>
 			</div>
 		</div>
