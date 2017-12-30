@@ -1,23 +1,3 @@
-function checkFileFormat(file) {
-	var reader = new FileReader();
-
-	// Closure to capture the file information.
-	reader.onload = function(e) {
-		text = e.target.result;
-		console.log("Read file...");
-	}
-
-	// Read in the image file as a data URL.
-	reader.readAsText(file);
-}
-
-function computeStatistics(file) {
-
-}
-
-function drawPlots(file) {
-
-}
 
 function analyzeChatBackup(file) {
 	$("#dropzone").addClass("hidden");
@@ -71,4 +51,11 @@ window.onload = function() {
 
 	var manualSelect = document.getElementById('manual-select');
 	manualSelect.addEventListener('change', handleFileSelect, false);
+
+	$(".tags-element").tagsInput({
+		'height':'58px',
+		'width': '100%',
+		'defaultText': 'Add a nickname',
+		'min-height': '58px'
+	});
 }
