@@ -7,7 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="index.css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script src="https://unpkg.com/compromise@latest/builds/compromise.min.js"></script>
+	<!-- <script src="https://unpkg.com/compromise@latest/builds/compromise.min.js"></script> -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.1.0"></script>
 
@@ -33,12 +33,43 @@
 					
 				</div>
 			</div>
-			<div id="total_messages" class="hidden dual_container">
-				<div class="single_container">
-					<canvas id="total_messages_overall"></canvas>
+
+			<!-- Charts below -->
+			<div id="all_charts" class="hidden chart_container">
+				<div id="total_messages" class="hidden dual_container">
+					<div class="single_container">
+						<canvas id="total_messages_overall"></canvas>
+					</div>
+					<div class="single_container">
+						<canvas id="total_messages_lastyear"></canvas>
+					</div>
 				</div>
-				<div class="single_container">
-					<canvas id="total_messages_lastyear"></canvas>
+
+				<div id="total_words" class="hidden dual_container">
+					<div class="single_container">
+						<canvas id="total_words_overall"></canvas>
+					</div>
+					<div class="single_container">
+						<canvas id="total_words_lastyear"></canvas>
+					</div>
+				</div>
+
+				<div id="message_length" class="hidden dual_container">
+					<div class="single_container">
+						<canvas id="message_length_overall"></canvas>
+					</div>
+					<div class="single_container">
+						<canvas id="message_length_lastyear"></canvas>
+					</div>
+				</div>
+
+				<div id="message_density" class="hidden dual_container">
+					<div class="single_container">
+						<canvas id="message_density_overall"></canvas>
+					</div>
+					<div class="single_container">
+						<canvas id="message_density_lastyear"></canvas>
+					</div>
 				</div>
 			</div>
 		</div>
