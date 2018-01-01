@@ -155,8 +155,88 @@ function computeStatistics(file) {
 	sort_by_second(all_first_names, message_density_last_year);
 
 	processed_data['message_density_lastyear'] = {labels: all_first_names, data: message_density_last_year.map(x => x.toFixed(2))};
+
+	// average word length
+	var all_first_names = all_users.map(name => name.split(' ')[0]);
+	var word_length = all_first_names.map(name => processed_data['message_length_overall'].data[processed_data['message_length_overall'].labels.indexOf(name)]/processed_data['total_words_overall'].data[processed_data['total_words_overall'].labels.indexOf(name)]);
+	sort_by_second(all_first_names, word_length);
+
+	processed_data['word_length_overall'] = {labels: all_first_names, data: word_length.map(x => x.toFixed(2))};
+
+	var all_first_names = all_users.map(name => name.split(' ')[0]);
+	var word_length_last_year = all_first_names.map(name => processed_data['message_length_lastyear'].data[processed_data['message_length_lastyear'].labels.indexOf(name)]/processed_data['total_words_lastyear'].data[processed_data['total_words_lastyear'].labels.indexOf(name)]);
+	sort_by_second(all_first_names, word_length_last_year);
+
+	processed_data['word_length_lastyear'] = {labels: all_first_names, data: word_length_last_year.map(x => x.toFixed(2))};
 	
 	// total words
+	processed_data['aggregates'] = {
+		'total_messages': processed_data['total_messages_overall'].data.reduce((a, b) => a + b, 0),
+		'total_messages_lastyear': processed_data['total_messages_lastyear'].data.reduce((a, b) => a + b, 0),
+		'total_words': processed_data['total_words_overall'].data.reduce((a, b) => a + b, 0),
+		'total_words_lastyear': processed_data['total_words_lastyear'].data.reduce((a, b) => a + b, 0)
+	}
+
+	var vocab_before_last_year = new Set();
+	var vocab_in_last_year = new Set();
+	for (var user in users) {
+		for (var msgIdx = 0; msgIdx < messages[user].length; msgIdx++) {
+			if (messages[user][msgIdx].date - last_year_date <= 0) {
+				var tokens = messages[user][msgIdx].message.toLowerCase().trim().split(/\s+/);
+				for (var i = tokens.length - 1; i >= 0; i--) {
+					vocab_before_last_year.add(tokens[i])
+				}
+			}
+		}
+	}
+
+	for (var user in users) {
+		for (var msgIdx = 0; msgIdx < messages[user].length; msgIdx++) {
+			if (messages[user][msgIdx].date - last_year_date > 0) {
+				// Within the last year
+				var tokens = messages[user][msgIdx].message.toLowerCase().trim().split(/\s+/);
+				for (var i = tokens.length - 1; i >= 0; i--) {
+					if (!vocab_before_last_year.has(tokens[i]))
+						vocab_in_last_year.add(tokens[i])
+				}
+			}
+		}
+	}
+
+	Set.prototype.union = function(setB) {
+		var union = new Set(this);
+		for (var elem of setB) {
+			union.add(elem);
+		}
+		return union;
+	}
+
+	processed_data['aggregates']['total_unique_words'] = vocab_before_last_year.size + vocab_in_last_year.size
+	processed_data['aggregates']['total_unique_words_last_year'] = vocab_in_last_year.size
+	processed_data['aggregates']['unique_words'] = vocab_before_last_year.union(vocab_in_last_year)
+	processed_data['aggregates']['unique_words_last_year'] = vocab_in_last_year
+
+	var time_usage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	var time_usage_lastyear = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	for (var user in users) {
+		for (var msgIdx = 0; msgIdx < messages[user].length; msgIdx++) {
+			time_usage[messages[user][msgIdx].date.getHours()] += 1;
+			if (messages[user][msgIdx].date - last_year_date > 0) {
+				time_usage_lastyear[messages[user][msgIdx].date.getHours()] += 1;
+			}
+		}
+	}
+
+	processed_data['time_usage_overall'] = {
+		labels: ['12AM', '1AM', '2AM', '3AM', '4AM', '5AM', '6AM', '7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM', '9PM', '10PM', '11PM'],
+		data: time_usage
+	}
+
+	processed_data['time_usage_lastyear'] = {
+		labels: ['12AM', '1AM', '2AM', '3AM', '4AM', '5AM', '6AM', '7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM', '9PM', '10PM', '11PM'],
+		data: time_usage_lastyear
+	}
+
 	// total pics
 	// total messages
 	// max people
@@ -212,7 +292,14 @@ function drawPlots(file) {
 
 	console.log("Drawing Message Density")
 	$("#message_density").removeClass("hidden");
-	plot_dual_bar_graphs("message_density_overall", "Message Length in characters", "message_density_lastyear", "Message Length in the last year")
+	plot_dual_bar_graphs("message_density_overall", "Message Density (words/message)", "message_density_lastyear", "Message Density in the last year")
+
+	console.log("Drawing Average Word Length")
+	$("#word_length").removeClass("hidden");
+	plot_dual_bar_graphs("word_length_overall", "Average Word Length (characters/words)", "word_length_lastyear", "Average Word Length in the last year")
+
+	$("#time_usage").removeClass("hidden");
+	plot_dual_vertical_bar_graphs("time_usage_overall", "Most popular times", "time_usage_lastyear", "Most popular times in the last year")
 }
 
 function plot_dual_bar_graphs(overall_id, overall_title, lastyear_id, lastyear_title) {
@@ -239,9 +326,7 @@ function plot_dual_bar_graphs(overall_id, overall_title, lastyear_id, lastyear_t
 	        scales: {
 	            xAxes: [{
 	                ticks: {
-	                    beginAtZero: true,
-	                    max: upper_limit,
-	                    min: 0
+	                    max: upper_limit
 	                }
 	            }]
 	        }
@@ -268,9 +353,66 @@ function plot_dual_bar_graphs(overall_id, overall_title, lastyear_id, lastyear_t
 	        scales: {
 	            xAxes: [{
 	                ticks: {
-	                    beginAtZero: true,
-                        max : upper_limit,
-                        min : 0
+                        max : upper_limit
+	                }
+	            }]
+	        }
+	    }
+	});
+}
+
+function plot_dual_vertical_bar_graphs(overall_id, overall_title, lastyear_id, lastyear_title) {
+	var ctx;
+
+	// Drawing total message plot
+	ctx = document.getElementById(overall_id).getContext('2d');
+	var upper_limit = processed_data[overall_id].data.max();
+	upper_limit += upper_limit * 0.1;
+	var myChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: processed_data[overall_id].labels,
+			datasets: [
+				{
+					label: overall_title,
+					data: processed_data[overall_id].data,
+					backgroundColor: window.chartColors.light_blue,
+					borderColor: window.chartColors.green
+				}
+			]
+		},
+	    options: {
+	        scales: {
+	            xAxes: [{
+	                ticks: {
+	                    max: upper_limit
+	                }
+	            }]
+	        }
+	    }
+	});
+
+	ctx = document.getElementById(lastyear_id).getContext('2d');
+	var upper_limit = processed_data[lastyear_id].data.max();
+	upper_limit += upper_limit * 0.1;
+	var myChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: processed_data[lastyear_id].labels,
+			datasets: [
+				{
+					label: lastyear_title,
+					data: processed_data[lastyear_id].data,
+					backgroundColor: window.chartColors.light_green,
+					borderColor: window.chartColors.green
+				}
+			]
+		},
+	    options: {
+	        scales: {
+	            xAxes: [{
+	                ticks: {
+                        max : upper_limit
 	                }
 	            }]
 	        }
